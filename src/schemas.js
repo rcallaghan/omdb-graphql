@@ -1,5 +1,6 @@
 import {
   GraphQLObjectType,
+  GraphQLList,
   GraphQLString,
   GraphQLSchema,
   GraphQLNonNull
@@ -110,6 +111,29 @@ const responseObject = {
     }
 }
 
+const searchObject = {
+    Title: {
+      type: GraphQLString,
+      description: "Title of the movie or tv show"
+    },
+    Year: {
+      type: GraphQLString,
+      description: "Year the title was released"
+    },
+    imdbId: {
+      type: GraphQLString,
+      description: "Id of title on imdb"
+    },
+    Type: {
+      type: GraphQLString,
+      description: "Type of program movie/tv"
+    },
+    Poster: {
+      type: GraphQLString,
+      description: "Image link"
+    }
+}
+
 const TitleType = new GraphQLObjectType({
   name: 'Title',
   description: 'Title of IMDB API for data',
@@ -126,11 +150,19 @@ const SpecificType = new GraphQLObjectType({
   )
 })
 
+const SearchType = new GraphQLObjectType({
+  name: 'Search',
+  description: 'Find specific title with IMDB id',
+  fields: () => (
+    searchObject
+  )
+})
+
 const QueryType = new GraphQLObjectType({
   name: 'Query',
   description: 'The root of all... queries',
   fields: () => ({
-    Title: {
+    ByTitle: {
       type: TitleType,
       args: {
         title: {
@@ -138,11 +170,10 @@ const QueryType = new GraphQLObjectType({
         }
       },
       resolve: (root, {title}) => requestManager(title, '&t=').then(payload => {
-        console.log(payload)
         return payload
       })
     },
-    SpecificTitle: {
+    ByID: {
       type: SpecificType,
       args: {
         id: {
@@ -152,6 +183,17 @@ const QueryType = new GraphQLObjectType({
       resolve: (root, {id}) => requestManager(id).then(payload => {
         return payload
       })     
+    },
+    Search: {
+      type: SearchType,
+      args: {
+        title: {
+            type: new GraphQLNonNull(GraphQLString)
+        }
+      },
+      resolve: (root, {title}) => requestManager(title, '&s=').then(payload => {
+         return payload
+      })
     }
   })
 })
