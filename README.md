@@ -17,8 +17,9 @@ Example queries using GraphiQL at http://localhost:4000
 }
 ```
 
-#### By imdbID
+#### By specific imdbID
 
+```js
 {
 	ById(id: "tt0451279") {
 	  Title
@@ -28,6 +29,7 @@ Example queries using GraphiQL at http://localhost:4000
 	  Poster
 	} 
 }
+```
 
 #### Search for mutliple results
 ```js
